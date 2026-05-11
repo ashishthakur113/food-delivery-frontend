@@ -1,14 +1,21 @@
 .food-item{
     width: 100%;
-    margin: auto;
+    height: 100%;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
     border-radius: 15px;
     box-shadow: 0px 0px 10px #00000015;
     transition: 0.3s;
     animation: fadeIn 1s;
+    overflow: hidden;
+    background: white;
 }
 
 .food-item-img{
     width: 100%;
+    height: 220px;
+    object-fit: cover;
     border-radius: 15px 15px 0px 0px;
 }
 

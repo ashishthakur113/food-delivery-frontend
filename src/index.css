@@ -4,22 +4,33 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: Outfit ;
+  font-family: Outfit;
   scroll-behavior: smooth;
 }
 
-body{
+html, body, #root{
   min-height: 100vh;
+}
+
+body{
+  display: flex;
+  flex-direction: column;
+}
+
+#root{
+  display: flex;
+  flex-direction: column;
+}
+
+.app{
+  width: 80%;
+  margin: auto;
+  flex: 1;
 }
 
 a{
   text-decoration: none;
   color: inherit;
-}
-
-.app{
-  margin: auto;
-  width: 80%;
 }
 
 @keyframes fadeIn{
@@ -29,5 +40,4 @@ a{
   100%{
     opacity: 1;
   }
-
 }

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import './Navbar.css'
 import { assets } from "../../assets/assets"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearCart, getTotalCartQuantity } from '../../redux-tookit/CartSlice'
@@ -14,12 +14,28 @@ export default function Navbar({ setShowLogin }) {
    const cartQty = useSelector(getTotalCartQuantity);
    const [menu, setMenu] = useState("Home");
    const dispatch = useDispatch()
+   const navigate = useNavigate();
 
-  const handleLogout = () => {
-  dispatch(logout());
-  dispatch(clearCart());
 
-};
+
+   const handleLogout = async () => {
+
+      const token = localStorage.getItem("token");
+
+      await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
+         method: "POST",
+
+         headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+         },
+      });
+
+      dispatch(logout());
+      dispatch(clearCart());
+      navigate('/')
+
+   };
 
 
    return (
@@ -31,7 +47,7 @@ export default function Navbar({ setShowLogin }) {
          <ul className='navbar-menu'>
             <Link to="/" onClick={() => setMenu("Home")} className={menu === "Home" ? "active" : ""}>Home</Link>
             <a href='#explore-menu' onClick={() => setMenu("Menu")} className={menu === "Menu" ? "active" : ""}>Menu</a>
-            <Link to='/aboutus' onClick={() => setMenu("Mobile-app")} className={menu === "Mobile-app" ? "active" : ""}>About Us</Link>
+            <Link to='/aboutus' onClick={() => setMenu("Mobile-app")} className={menu === "Mobile-app" ? "active" : ""}>AboutUs</Link>
             <a href='#footer' onClick={() => setMenu("Contact-us")} className={menu === "Contact-us" ? "active" : ""}>Contact </a>
          </ul>
          <div className="navbar-right">
@@ -51,9 +67,21 @@ export default function Navbar({ setShowLogin }) {
                   </span>
 
                   <div className="navbar-dropdown">
-                     <Link to="/yourOrder" className="dropdown-item">
-                       <button>My Orders</button>
-                     </Link>
+                     {
+                        user?.role === "admin" ? (
+
+                           <Link to="/admin/dashboard" className="dropdown-item">
+                              <button>Dashboard</button>
+                           </Link>
+
+                        ) : (
+
+                           <Link to="/yourOrder" className="dropdown-item">
+                              <button>My Orders</button>
+                           </Link>
+
+                        )
+                     }
                      <hr />
                      <button
                         className="dropdown-item logout"
@@ -65,7 +93,7 @@ export default function Navbar({ setShowLogin }) {
                </div>
 
             ) : (
-               <button className='sign-in' onClick={() => setShowLogin(true)}><FaRegUser/></button>
+               <button className='sign-in' onClick={() => setShowLogin(true)}><FaRegUser /></button>
             )}
 
          </div>

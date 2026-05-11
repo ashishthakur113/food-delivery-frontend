@@ -53,15 +53,13 @@ export default function AboutPage() {
                  restaurants. Discover how we make food ordering simple, fast, and reliable."
             />
             <div className='about-hero'>
-                <img src={FreshFood1} alt="Delicious food" />
+                <img src={FreshFood1} alt="Delicious food" loading='lazy' />
             </div>
 
             <div className="about-overlay">
                 <h1>Deliver Delicious <br /> Food , Fast & Fresh</h1>
                 <p>
-                    We bring your favorite meals from top restaurants straight to your
-                    doorstep. Fresh ingredients, fast delivery, and a great experience —
-                    every single time.
+                   We deliver fresh, delicious meals from your favorite <br /> restaurants — fast and hassle-free.
                 </p>
             </div>
 
@@ -76,7 +74,7 @@ export default function AboutPage() {
                     </p>
                 </div>
                 <div className='inner-right'>
-                    <img src={cook1} alt="cook_image" />
+                    <img src={cook1} alt="cook_image" loading='lazy'/>
                 </div>
             </div>
 

@@ -23,43 +23,52 @@
 
 .about-overlay {
   position: absolute;
-  top: 60%;
+  top: 50%;
   left: 12%;
   transform: translateY(-50%);
-  max-width: 500px;
+  width: 90%;
+  max-width: 600px;
   z-index: 2;
 }
 
 .about-overlay h1 {
-  font-size: 42px;
+  font-size: clamp(28px, 5vw, 52px);
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  margin-bottom: 12px;
-  font-weight: 500;
-  letter-spacing: 2px;
-  color: black;
+  margin-bottom: 14px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 1px;
+  color: white;
 }
 
 .about-overlay p {
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 1.2;
-  opacity: 0.95;
-  color: rgb(75, 166, 87);
+  font-size: clamp(14px, 2vw, 20px);
+  font-weight: 500;
+  line-height: 1.5;
+  color: #f3f4f6;
 }
 
-/* Responsive */
+/* Mobile */
 @media (max-width: 768px) {
+
+  .about-hero {
+    height: 55vh;
+  }
+
   .about-overlay {
-    left: 5%;
-    right: 5%;
-    max-width: 100%;
+    left: 11%;
+    top: 50%;
+    width: 90%;
   }
 
   .about-overlay h1 {
-    font-size: 30px;
+    line-height: 1.2;
+  }
+
+  .about-overlay p {
+    margin-top: 10px;
   }
 }
-
 .about-div1 {
   width: 100%;
   min-height: 30vh;

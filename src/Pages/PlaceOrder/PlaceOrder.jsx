@@ -1,83 +1,162 @@
 import React, { useContext, useEffect, useState } from 'react';
 import './PlaceOrder.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTotalCartAmount } from '../../redux-tookit/CartSlice';
+import { getTotalCartAmount, clearCart } from '../../redux-tookit/CartSlice';
 import { toast } from 'react-toastify';
-import { Link, useNavigate } from 'react-router-dom';
-import { StoreContext } from '../../context/StoreContext';
-import { clearCart } from '../../redux-tookit/CartSlice';
+import { useNavigate } from 'react-router-dom';
 import SEO from '../../Components/SEO/SEO';
+import { StoreContext } from '../../context/StoreContext';
 
 export default function PlaceOrder() {
 
   const totalAmount = useSelector(getTotalCartAmount);
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const { user } = useSelector(state => state.auth);
-  const { food_list } = useContext(StoreContext)
-  const dispatch = useDispatch()
+  const { food_list } = useContext(StoreContext);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState(() => {
-  const saved = JSON.parse(localStorage.getItem("deliveryInfo"));
+    const saved = JSON.parse(localStorage.getItem("deliveryInfo"));
 
-  return {
-    firstName: saved?.firstName || "",
-    lastName: saved?.lastName || "",
-    email: user?.email || "",   
-    street: saved?.street || "",
-    area: saved?.area || "",
-    city: saved?.city || "",
-    state: saved?.state || "",
-    zip: saved?.zip || "",
-    phone: saved?.phone || "",
-  };
-});
+    return {
+      firstName: saved?.firstName || "",
+      lastName: saved?.lastName || "",
+      email: user?.email || "",
+      street: saved?.street || "",
+      area: saved?.area || "",
+      city: saved?.city || "",
+      state: saved?.state || "",
+      zip: saved?.zip || "",
+      phone: saved?.phone || "",
+    };
+  });
 
-  const cartItems = JSON.parse(localStorage.getItem('carts'))?.[user?.email] || {};
+  const orderItems = Object.entries(cartItems).map(([id, item]) => {
 
-  const orderItems = food_list
-    .filter(item => cartItems[item._id] > 0)
-    .map(item => ({
-      id: item._id,
-      name: item.name,
-      image: item.image,
-      quantity: cartItems[item._id],
-    }));
+    const food = food_list.find(food => food.id == id);
+    if (!food) return null;
 
-  const handlePlaceOrder = (e) => {
-    e.preventDefault()
-      ; if (totalAmount === 0) {
-        toast.error("Your cart is empty");
-        return;
+    return {
+      id: food.id,
+      quantity: item.quantity,
+      price: food.price
+    };
 
-      }
+  }).filter(Boolean);
 
-    const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
 
-    const newOrder = {
-      id: Date.now(),
-      date: new Date().toLocaleDateString(),
-      total: totalAmount + 2,
-      itemsCount: orderItems.reduce((a, b) => a + b.quantity, 0),
-      items: orderItems,
-      address: {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+const handlePayNow = async () => {
+
+  if (totalAmount === 0) {
+    toast.error("Cart is empty");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+
+    const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      },
+      body: JSON.stringify({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
         street: formData.street,
         city: formData.city,
         state: formData.state,
         zip: formData.zip,
-        country: formData.area,
         phone: formData.phone,
+        total_price: totalAmount + 2,
+        items: orderItems
+      })
+    });
+
+    const orderData = await orderRes.json();
+
+    if (!orderRes.ok) {
+      toast.error(orderData.message || "Order failed");
+      return;
+    }
+
+    const orderId = orderData.order.id;
+
+    const paymentRes = await fetch(`${import.meta.env.VITE_API_URL}/payment/order`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       },
+      body: JSON.stringify({
+        amount: totalAmount + 2,
+        order_id: orderId
+      })
+    });
+
+    const paymentData = await paymentRes.json();
+
+    if (!paymentRes.ok) {
+      toast.error("Payment init failed");
+      return;
+    }
+
+    const options = {
+      key: paymentData.key,
+      amount: paymentData.amount,
+      currency: "INR",
+      order_id: paymentData.order_id,
+
+      handler: async (response) => {
+       await verifyPayment(response, orderId, orderItems);
+      }
     };
 
-    localStorage.setItem(
-      "orders", JSON.stringify([...existingOrders, newOrder])
-    );
-    dispatch(clearCart());
-    toast.success("Order Placed Successfully")
-    navigate("/yourOrder");
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong");
+  } finally {
+    setLoading(false);
   }
+};
+
+
+  const verifyPayment = async (paymentData, orderId, items) => {
+
+    try {
+
+      await fetch(`${import.meta.env.VITE_API_URL}/payment/verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+        ...paymentData,
+        order_id: orderId,
+        items: items
+        })
+      });
+
+      dispatch(clearCart());
+      toast.success("Payment Successful");
+
+      navigate("/yourOrder");
+
+    } catch (error) {
+      toast.error("Verification failed");
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem("deliveryInfo", JSON.stringify(formData));
@@ -88,117 +167,119 @@ export default function PlaceOrder() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const token = localStorage.getItem("token");
+     if (!token) {
+     return (
+       <div
+         style={{
+           minHeight: "60vh",
+           display: "flex",
+           alignItems: "center",
+           justifyContent: "center",
+           flexDirection: "column",
+           gap: "15px"
+         }}
+       >
+         <h1>Login</h1>
+   
+         <p style={{ color: "#777" }}>
+           Please login to Access This Page 
+         </p>
+   
+         <button
+           onClick={() => navigate("/")}
+           style={{
+             padding: "10px 20px",
+             border: "none",
+             background: "tomato",
+             color: "#fff",
+             borderRadius: "8px",
+             cursor: "pointer"
+           }}
+         >
+           Go Home
+         </button>
+       </div>
+     );
+  }
+
   return (
-    <form className="place-order" onSubmit={handlePlaceOrder}>
+    <form className="place-order" onSubmit={(e) => e.preventDefault()}>
+
       <SEO
         title="Place Order - Plato"
-        description="Enter your delivery details and proceed to payment to complete your food order. Fast, fresh, and reliable food delivery from your favorite local restaurants."
+        description="Enter delivery details and complete your order."
       />
+
       <div className="place-order-left">
         <p className="title">Delivery Information</p>
 
         <div className="multi-fields">
-          <input
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
-          <input
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
+          <input name="firstName" placeholder="First Name"
+            value={formData.firstName} onChange={handleChange} required />
+
+          <input name="lastName" placeholder="Last Name"
+            value={formData.lastName} onChange={handleChange} required />
         </div>
 
-        <input
-          name="email"
-          placeholder="Email address"
-          value={formData.email}
-          disabled
-        />
+        <input name="email" value={formData.email} disabled />
 
-        <input
-          name="street"
-          placeholder="Street"
-          value={formData.street}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="area"
-          placeholder="Area"
-          value={formData.area}
-          onChange={handleChange}
-          required
-        />
+        <input name="street" placeholder="Street"
+          value={formData.street} onChange={handleChange} required />
+
+        <input name="area" placeholder="Area"
+          value={formData.area} onChange={handleChange} required />
 
         <div className="multi-fields">
-          <input
-            name="city"
-            placeholder="City"
-            value={formData.city}
-            onChange={handleChange}
-            required
-          />
-          <input
-            name="state"
-            placeholder="State"
-            value={formData.state}
-            onChange={handleChange}
-            required
-          />
+          <input name="city" placeholder="City"
+            value={formData.city} onChange={handleChange} required />
+
+          <input name="state" placeholder="State"
+            value={formData.state} onChange={handleChange} required />
         </div>
 
-        <div className="multi-fields">
-          <input
-            name="zip"
-            placeholder="Zip-code"
-            value={formData.zip}
-            onChange={handleChange}
-            required
-          />
+        <input name="zip" placeholder="Zip-code"
+          value={formData.zip} onChange={handleChange} required />
 
-        </div>
-
-        <input
-          name="phone"
-          placeholder="Phone"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
+        <input name="phone" placeholder="Phone"
+          value={formData.phone} onChange={handleChange} required />
       </div>
 
       <div className="place-order-right">
         <div className="cart-total">
-          <h2>Cart Totals</h2>
+
+          <h2>Cart Summary</h2>
 
           <div className="cart-total-details">
             <p>SubTotal</p>
-            <p>$ {totalAmount}</p>
+            <p>${totalAmount}</p>
           </div>
+
           <hr />
 
           <div className="cart-total-details">
             <p>Delivery Fee</p>
-            <p>$ {totalAmount === 0 ? 0 : 2}</p>
+            <p>${totalAmount === 0 ? 0 : 2}</p>
           </div>
+
           <hr />
 
           <div className="cart-total-details">
             <b>Total</b>
-            <b>$ {totalAmount === 0 ? 0 : totalAmount + 2}</b>
+            <b>${totalAmount === 0 ? 0 : totalAmount + 2}</b>
           </div>
 
-          <button type="submit" >
-            PROCEED TO PAYMENT
+          <button
+            type="button"
+            onClick={handlePayNow}
+            disabled={loading}
+          >
+            {loading ? "PROCESSING..." : "PAY NOW"}
           </button>
+
         </div>
       </div>
+
     </form>
   );
 }

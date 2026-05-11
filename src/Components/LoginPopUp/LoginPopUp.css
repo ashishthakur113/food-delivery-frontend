@@ -74,6 +74,31 @@
     cursor: pointer;
 }
 
+.loading-btn{
+  opacity: 0.7;
+  cursor: not-allowed;
+}
 
+.btn-loader-wrap{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mini-loader{
+  width: 18px;
+  height: 18px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin{
+  100%{
+    transform: rotate(360deg);
+  }
+}
 
 

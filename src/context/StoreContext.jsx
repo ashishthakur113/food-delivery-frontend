@@ -1,25 +1,41 @@
 import { createContext, useEffect, useState } from "react";
-import { food_list } from "../assets/assets";
 
-export const StoreContext = createContext(null)
+export const StoreContext = createContext(null);
 
-const StoreContextProvide=(props)=>{
+const StoreContextProvide = (props) => {
 
-   const [searchTerm , setSearchTerm] = useState("")
- 
-    const contextValue={
+   const [food_list, setFoodList] = useState([]);
+   const [searchTerm, setSearchTerm] = useState("");
+   const [loading, setLoading] = useState(true);
+
+   const fetchFoods = async () => {
+
+      setLoading(true);
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/foods`
+      );
+      
+      const data = await res.json();
+      setFoodList(data);
+      setLoading(false);
+   };
+
+   useEffect(() => {
+      fetchFoods();
+   }, []);
+
+   const contextValue = {
       food_list,
-      searchTerm,
-      setSearchTerm
+      fetchFoods,
+      loading
+   };
 
-    }
-    
-    return(
-        <StoreContext.Provider value={contextValue}>
-           {props.children}
-        </StoreContext.Provider>
-    )
-}
+   return (
+      <StoreContext.Provider value={contextValue}>
+         {props.children}
+      </StoreContext.Provider>
+   );
+};
 
 export default StoreContextProvide;
-
