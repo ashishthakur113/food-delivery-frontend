@@ -1,104 +1,169 @@
-# 🍽️ Plato – Food Delivery Website
+# 🍽️ Plato – Full Stack Food Delivery Web Application
 
-![Plato-Preview](https://github.com/ashishthakur113/Plato/blob/4516773034b03f47165898e7f4084f0b989896b8/src/assets/Plato.png)
+![Plato Preview](https://github.com/ashishthakur113/Plato/blob/4516773034b03f47165898e7f4084f0b989896b8/src/assets/Plato.png)
 
-**Plato** is a modern, fast, and fully responsive food delivery web application built using **React**.  
-It allows users to order food from nearby local restaurants and get it delivered fresh and quickly.
+Plato is a modern **Full Stack Food Delivery Web Application** built using **React.js** and **Laravel API**.  
+The platform allows users to browse foods, add items to cart, place orders, manage order history, and securely authenticate users using Laravel Sanctum.
 
-The platform focuses on speed, simplicity, and a smooth user experience — from browsing meals to placing orders and viewing order history.
-
----
-
-## 🚀 Live Demo
-
-🔗 [View the live website](https://plato-fooddelivery.vercel.app/)
+The project also includes a complete **Admin Dashboard** where admins can manage foods, monitor orders, and control platform content.
 
 ---
 
-## 🧰 Tech Stack
+# 🚀 Live Demo
 
-| Tool | Usage |
-|------|------|
-| ⚛️ React.js | Frontend Framework |
-| 🧭 React Router | Client-side routing |
-| 🗃️ Redux Toolkit | Global state (Cart, Orders) |
-| 🧠 Context API | Shared application state |
-| 🎨 CSS | Styling & responsive UI |
-| 🎯 React Icons | Iconography |
-| ☁️ Netlify | Deployment |
+🔗 **Frontend:** https://plato-fooddelivery.vercel.app/
 
 ---
 
-## ✨ Features
+# 🧰 Tech Stack
 
-### 🖥️ Frontend
-- 🏠 Clean and modern Home page
-- 🔍 Search bar for quick food discovery
-- 🎯 Category-based food filtering
-- 📱 Fully responsive design
+## 🎨 Frontend
 
-### 🛒 Order & Cart Functionality
-- 🛒 Add / remove items from cart
-- 🔄 Real-time cart updates
-- 📦 Place order with delivery details
-- 🧾 Order summary before checkout
-
-### 👤 User System
-- 🔐 Sign Up / Login functionality
-- 🧾 Order history page
-- 💾 Data persistence using Redux & localStorage
-
-### 🌐 Utility
-- ℹ️ About page
-- 📞 Contact details in footer
-- 🎸 GSAP guitar string animation
-- 🔔 Toast notifications for user actions
+- ⚛️ React.js
+- 🧭 React Router DOM
+- 🗃️ Redux Toolkit
+- 🎯 Context API
+- 🎨 CSS3
+- 🔔 React Toastify
+- 🎯 React Icons
+- 📱 Fully Responsive Design
 
 ---
 
-## 🧭 Pages & Routes
+## ⚙️ Backend
 
-- 🏠 Home  
-- 🛒 Cart  
-- ℹ️ About  
-- 🔐 Sign In / Login  
-- 📦 Place Order (User Details)  
-- 🧾 Order History  
-
-
----
-
-## 📚 What I Learned
-
-- Building multi-page apps using `react-router-dom`
-- Managing global state with Redux Toolkit
-- Combining Redux with Context API
-- Persisting cart and order data using localStorage
-- Creating responsive layouts with CSS
-- Structuring scalable React projects
+- 🚀 Laravel
+- 🔐 Laravel Sanctum Authentication
+- 🗄️ MySQL Database
+- 📦 Eloquent ORM
+- 🛡️ Middleware Protection
+- 📂 REST APIs
+- 💳 Razorpay Payment Integration
 
 ---
 
-## 🔮 Future Plans
+# ✨ Features
 
-- 💳 Integrate payment gateway (Razorpay / Stripe)
-- 🗺️ Live order tracking
-- 🧠 Backend integration (java + Mysql)
-- 🏪 Restaurant dashboard for menu management
-- 🔐 Improved authentication system
+## 👤 Authentication System
 
----
-
-## 👨‍💻 Developer Contact
-
-🔗 [LinkedIn – Ashish Tomar](https://www.linkedin.com/in/ashish-tomar-90b415330/)  
-🐙 [GitHub – ashishthakur113](https://github.com/ashishthakur113)
+- 🔐 User Registration
+- 🔑 Login Authentication
+- 🚪 Secure Logout
+- 🛡️ Protected Routes using Sanctum
+- 💾 Persistent Authentication
 
 ---
 
-> ⭐ **Feel free to fork this repository, give it a star, or contribute!**  
-> Happy food ordering with **Plato** 🍕🍔
+## 🍔 Food Management
 
+- 🍕 Browse Foods
+- 🔍 Search Foods
+- 🎯 Category Filtering
+- 🖼️ Food Image Upload
+- 📱 Responsive Food Cards
+- ⚡ Fast API-based Data Fetching
+
+---
+
+## 🛒 Cart System
+
+- ➕ Add to Cart
+- ➖ Remove from Cart
+- 🔄 Quantity Update
+- 💾 Cart Persistence using Redux & localStorage
+- 💰 Dynamic Cart Total Calculation
+
+---
+
+## 📦 Order System
+
+- 🧾 Place Orders
+- 📍 Delivery Information
+- 📜 Order History
+- ⏱️ Delivery Status Tracking
+- 💳 Razorpay Payment Support
+- 📅 Order Date & Time
+- 🚚 Delivery Arrival Time UI
+
+---
+
+# 🛠️ Admin Dashboard
+
+The project includes a complete admin panel for platform management.
+
+## 👨‍💼 Admin Features
+
+- 📊 Dashboard Analytics
+- 👥 Total Users Count
+- 📦 Total Orders Tracking
+- 💰 Revenue Overview
+- 🕒 Recent Orders Section
+- ➕ Add New Food Items
+- 📋 Food List Management
+- ✏️ Edit Food Functionality
+- ❌ Delete Food Items
+- 🖼️ Food Image Management
+
+---
+
+# 🗄️ Database Features
+
+- 🗃️ MySQL Relational Database
+- 🔗 User & Orders Relationship
+- 📦 Order Items Relationship
+- 🍔 Food Management Tables
+- 🔐 Sanctum Token Storage
+- ⚡ Optimized Database Queries
+
+---
+
+# 📱 Responsive Design
+
+The application is fully responsive across:
+
+- 💻 Desktop Devices
+- 📱 Mobile Devices
+- 📲 Tablets
+- 🖥️ Large Screens
+
+---
+
+# 🧭 Application Pages
+
+## 👨‍🍳 User Pages
+
+- 🏠 Home
+- 🛒 Cart
+- 📦 Place Order
+- 🧾 Order History
+- 🔐 Login
+- 📝 Register
+- ℹ️ About
+
+---
+
+## 👨‍💼 Admin Pages
+
+- 📊 Admin Dashboard
+- ➕ Add Food
+- 📋 Food List
+- ✏️ Edit Food
+
+---
+
+# 📚 What I Learned
+
+- Building Full Stack Applications
+- Creating REST APIs with Laravel
+- Token Authentication using Sanctum
+- Managing State with Redux Toolkit
+- Database Relationships using Eloquent ORM
+- Admin Dashboard Architecture
+- File Upload Handling in Laravel
+- Frontend & Backend Integration
+- API Authentication & Middleware
+- Payment Gateway Integration
+- Responsive UI Development
 
 
 
