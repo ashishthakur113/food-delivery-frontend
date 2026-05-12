@@ -109,7 +109,7 @@ const handlePayNow = async () => {
     }
 
     const options = {
-      key: paymentData.key,
+      key: import.meta.env.VITE_RAZORPAY_KEY,
       amount: paymentData.amount,
       currency: "INR",
       order_id: paymentData.order_id,
