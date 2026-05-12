@@ -49,86 +49,90 @@ export default function PlaceOrder() {
   }).filter(Boolean);
 
 
-const handlePayNow = async () => {
+  const handlePayNow = async () => {
 
-  if (totalAmount === 0) {
-    toast.error("Cart is empty");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-
-    const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
-      body: JSON.stringify({
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        street: formData.street,
-        city: formData.city,
-        state: formData.state,
-        zip: formData.zip,
-        phone: formData.phone,
-        total_price: totalAmount + 2,
-        items: orderItems
-      })
-    });
-
-    const orderData = await orderRes.json();
-
-    if (!orderRes.ok) {
-      toast.error(orderData.message || "Order failed");
+    if (totalAmount === 0) {
+      toast.error("Cart is empty");
       return;
     }
 
-    const orderId = orderData.order.id;
+    setLoading(true);
 
-    const paymentRes = await fetch(`${import.meta.env.VITE_API_URL}/payment/order`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
-      body: JSON.stringify({
-        amount: totalAmount + 2,
-        order_id: orderId
-      })
-    });
+    try {
 
-    const paymentData = await paymentRes.json();
+      const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          street: formData.street,
+          city: formData.city,
+          state: formData.state,
+          zip: formData.zip,
+          phone: formData.phone,
+          total_price: totalAmount + 2,
+          items: orderItems
+        })
+      });
 
-    if (!paymentRes.ok) {
-      toast.error("Payment init failed");
-      return;
-    }
+      const orderData = await orderRes.json();
 
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY,
-      amount: paymentData.amount,
-      currency: "INR",
-      order_id: paymentData.order_id,
-
-      handler: async (response) => {
-       await verifyPayment(response, orderId, orderItems);
+      if (!orderRes.ok) {
+        toast.error(orderData.message || "Order failed");
+        return;
       }
-    };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+      const orderId = orderData.order.id;
 
-  } catch (error) {
-    console.log(error);
-    toast.error("Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
+      const paymentRes = await fetch(`${import.meta.env.VITE_API_URL}/payment/order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({
+          amount: totalAmount + 2,
+          order_id: orderId
+        })
+      });
+
+      const text = await paymentRes.text();
+
+      console.log("SERVER RESPONSE:", text);
+
+      return;
+
+      if (!paymentRes.ok) {
+        toast.error("Payment init failed");
+        return;
+      }
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY,
+        amount: paymentData.amount,
+        currency: "INR",
+        order_id: paymentData.order_id,
+
+        handler: async (response) => {
+          await verifyPayment(response, orderId, orderItems);
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const verifyPayment = async (paymentData, orderId, items) => {
@@ -142,9 +146,9 @@ const handlePayNow = async () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
-        ...paymentData,
-        order_id: orderId,
-        items: items
+          ...paymentData,
+          order_id: orderId,
+          items: items
         })
       });
 
@@ -168,39 +172,39 @@ const handlePayNow = async () => {
   };
 
   const token = localStorage.getItem("token");
-     if (!token) {
-     return (
-       <div
-         style={{
-           minHeight: "60vh",
-           display: "flex",
-           alignItems: "center",
-           justifyContent: "center",
-           flexDirection: "column",
-           gap: "15px"
-         }}
-       >
-         <h1>Login</h1>
-   
-         <p style={{ color: "#777" }}>
-           Please login to Access This Page 
-         </p>
-   
-         <button
-           onClick={() => navigate("/")}
-           style={{
-             padding: "10px 20px",
-             border: "none",
-             background: "tomato",
-             color: "#fff",
-             borderRadius: "8px",
-             cursor: "pointer"
-           }}
-         >
-           Go Home
-         </button>
-       </div>
-     );
+  if (!token) {
+    return (
+      <div
+        style={{
+          minHeight: "60vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          gap: "15px"
+        }}
+      >
+        <h1>Login</h1>
+
+        <p style={{ color: "#777" }}>
+          Please login to Access This Page
+        </p>
+
+        <button
+          onClick={() => navigate("/")}
+          style={{
+            padding: "10px 20px",
+            border: "none",
+            background: "tomato",
+            color: "#fff",
+            borderRadius: "8px",
+            cursor: "pointer"
+          }}
+        >
+          Go Home
+        </button>
+      </div>
+    );
   }
 
   return (
