@@ -9,12 +9,6 @@ The project also includes a complete **Admin Dashboard** where admins can manage
 
 ---
 
-# 🚀 Live Demo
-
-🔗 **Frontend:** https://plato-fooddelivery.vercel.app/
-
----
-
 # 🧰 Tech Stack
 
 ## 🎨 Frontend
