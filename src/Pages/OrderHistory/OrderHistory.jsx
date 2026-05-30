@@ -102,7 +102,7 @@ export default function OrderHistory() {
           </div>
 
           <div className="order-total">
-            <b>Total:</b> $ {order.total_price}
+            <b>Total:</b> ₹ {order.total_price}
           </div>
 
         </div>
