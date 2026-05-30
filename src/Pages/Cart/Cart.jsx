@@ -80,7 +80,7 @@ export default function Cart() {
     return acc + (item?.food?.price || 0) * item.quantity;
   }, 0);
 
-  const deliveryFee = subTotal === 0 ? 0 : 2;
+  const deliveryFee = subTotal === 0 ? 0 : 50;
   const total = subTotal + deliveryFee - discount;
 
   const removeItem = async (id) => {
@@ -151,7 +151,7 @@ export default function Cart() {
                   {item.food?.name}
                 </p>
 
-                <p>${item.food?.price}</p>
+                <p>₹{item.food?.price}</p>
 
                 <div className='qty-controls'>
 
@@ -229,7 +229,7 @@ export default function Cart() {
                 </div>
 
                 <p>
-                  ${item.food?.price * item.quantity}
+                  ₹{item.food?.price * item.quantity}
                 </p>
 
                 <p onClick={() => removeItem(id)} className='cross'>
@@ -251,21 +251,21 @@ export default function Cart() {
 
           <div className="cart-total-details">
             <p>SubTotal</p>
-            <p>${subTotal}</p>
+            <p>₹{subTotal}</p>
           </div>
 
           <hr />
 
           <div className="cart-total-details">
             <p>Delivery Fee</p>
-            <p>${deliveryFee}</p>
+            <p>₹{deliveryFee}</p>
           </div>
 
           <hr />
 
           <div className="cart-total-details">
             <b>Total</b>
-            <b>${total}</b>
+            <b>₹{total}</b>
           </div>
 
           <button onClick={() => navigate("/order")}>

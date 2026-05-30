@@ -68,7 +68,7 @@ export default function FoodList() {
                 <p>{item.description}</p>
 
                 <div className="food-meta">
-                  <span>₹ {item.price}</span>
+                  <span>$ {item.price}</span>
                   <span>{item.category}</span>
                   <span>{item.type}</span>
                 </div>

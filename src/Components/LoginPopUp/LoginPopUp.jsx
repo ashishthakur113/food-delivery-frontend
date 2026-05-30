@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./LoginPopUp.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../redux-tookit/AuthSlice";
@@ -10,6 +11,7 @@ export default function LoginPopUp({ setShowLogin }) {
 
   const [currState, setCurrState] = useState("Login");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -64,9 +66,9 @@ export default function LoginPopUp({ setShowLogin }) {
 
       if (!res.ok) {
         alert(data.message || "Something went wrong");
-        setLoading(false);
+        setLoading
         return;
-      }
+      } (false);
 
       dispatch(loginSuccess(data));
       localStorage.setItem("token", data.token);
@@ -118,15 +120,29 @@ export default function LoginPopUp({ setShowLogin }) {
             />
           )}
 
-          <input  type="email"  placeholder="Your Email"  value={formData.email}
-            onChange={(e) =>setFormData({ ...formData, email: e.target.value }) }
+          <input type="email" placeholder="Your Email" value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
           />
 
-          <input type="password" placeholder="Enter Password" value={formData.password}
-            onChange={(e) =>setFormData({ ...formData, password: e.target.value })}
-            required
-          />
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              required
+            />
+
+            <span
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
         </div>
 
         <button disabled={loading} className={loading ? "loading-btn" : ""}>

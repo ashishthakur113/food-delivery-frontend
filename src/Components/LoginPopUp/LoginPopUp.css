@@ -101,4 +101,21 @@
   }
 }
 
+.password-field {
+  position: relative;
+  width: 100%;
+}
 
+.password-field input {
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+}

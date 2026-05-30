@@ -3,8 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 export const initialState = {
     user: JSON.parse(localStorage.getItem("user")) || null,
     token: localStorage.getItem("token") || null,
-    isAuthenticated: !!localStorage.getItem("token"),
+    isAuthenticated: !!localStorage.getItem("token"), //!! to make the value boolean (true/false)
 };
+
+//  isAuthenticated = true  ,if localstorage had token
+//  isAuthenticated = false  ,if localstorage dorsn't have token
 
 const authSlice = createSlice({
     name: "auth",

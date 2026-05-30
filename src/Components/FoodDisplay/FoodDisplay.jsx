@@ -6,8 +6,7 @@ import Loader from '../Loader/Loader';
 
 export default function FoodDisplay({ category }) {
 
-    const { food_list, loading } =
-      useContext(StoreContext);
+    const { food_list, loading } = useContext(StoreContext);
 
     if (loading) {
       return <Loader />;

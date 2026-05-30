@@ -83,7 +83,7 @@ export default function AdminDashboard() {
 
                 <div className="dashboard-card">
                     <h3>Total Revenue</h3>
-                    <h1>${stats.totalRevenue}</h1>
+                    <h1>₹{stats.totalRevenue}</h1>
                 </div>
 
             </div>
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
                                 </p>
                             </div>
                             <div>
-                                <p><b>Total:</b> ${order.total_price}</p>
+                                <p><b>Total:</b> ₹{order.total_price}</p>
                             </div>
                         </div>
                     ))

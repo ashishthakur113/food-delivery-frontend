@@ -48,58 +48,59 @@ export default function PlaceOrder() {
 
   }).filter(Boolean);
 
+  const DELIVERY_FEE = 50;
 
-const handlePayNow = async () => {
-
-  if (totalAmount === 0) {
-    toast.error("Cart is empty");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-
-    const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
-      body: JSON.stringify({
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        street: formData.street,
-        city: formData.city,
-        state: formData.state,
-        zip: formData.zip,
-        phone: formData.phone,
-        total_price: totalAmount + 2,
-        items: orderItems
-      })
-    });
-
-    const orderData = await orderRes.json();
-
-    if (!orderRes.ok) {
-      toast.error(orderData.message || "Order failed");
+  const handlePayNow = async () => {
+  
+    if (totalAmount === 0) {
+      toast.error("Cart is empty");
       return;
     }
-
-    const orderId = orderData.order.id;
-
-    const paymentRes = await fetch(`${import.meta.env.VITE_API_URL}/payment/order`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
-      body: JSON.stringify({
-        amount: totalAmount + 2,
-        order_id: orderId
-      })
-    });
+  
+   setLoading(true);
+ 
+   try {
+ 
+     const orderRes = await fetch(`${import.meta.env.VITE_API_URL}/orders`, {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+         Authorization: `Bearer ${localStorage.getItem("token")}`
+       },
+       body: JSON.stringify({
+         first_name: formData.firstName,
+         last_name: formData.lastName,
+         email: formData.email,
+         street: formData.street,
+         city: formData.city,
+         state: formData.state,
+         zip: formData.zip,
+         phone: formData.phone,
+         total_price: totalAmount + DELIVERY_FEE,
+         items: orderItems
+       })
+     });
+ 
+     const orderData = await orderRes.json();
+ 
+     if (!orderRes.ok) {
+       toast.error(orderData.message || "Order failed");
+       return;
+     }
+ 
+     const orderId = orderData.order.id;
+ 
+     const paymentRes = await fetch(`${import.meta.env.VITE_API_URL}/payment/order`, {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+         Authorization: `Bearer ${localStorage.getItem("token")}`
+       },
+       body: JSON.stringify({
+         amount: totalAmount + DELIVERY_FEE,
+         order_id: orderId
+       })
+     });
 
     const paymentData = await paymentRes.json();
 
@@ -252,21 +253,21 @@ const handlePayNow = async () => {
 
           <div className="cart-total-details">
             <p>SubTotal</p>
-            <p>${totalAmount}</p>
+            <p>₹{totalAmount}</p>
           </div>
 
           <hr />
 
           <div className="cart-total-details">
             <p>Delivery Fee</p>
-            <p>${totalAmount === 0 ? 0 : 2}</p>
+            <p>₹{totalAmount === 0 ? 0 : DELIVERY_FEE}</p>
           </div>
 
           <hr />
 
           <div className="cart-total-details">
             <b>Total</b>
-            <b>${totalAmount === 0 ? 0 : totalAmount + 2}</b>
+            <b>₹{totalAmount === 0 ? 0 : totalAmount + DELIVERY_FEE}</b>
           </div>
 
           <button
